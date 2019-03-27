@@ -15,15 +15,16 @@ def join(table_a, table_b):
 		print('Join Type is Invalid Try again!')
 		return join(table_a, table_b)
 
-	JoinKeyLeftTable = input('Join Key for the Left Table?\n-->')
-	JoinKeyLeftTable = JoinKeyLeftTable[0].split(',')
-	matched_left_key = []
-	for key in JoinKeyLeftTable:
-		matched_left_key += nlp_helpers.ProcessLanguageTokens(key)
+	join_keys_left = input('Join Key for the Left Table?\n-->')
+	nlp_join_keys_left = nlp_helpers.ProcessLanguageTokens(join_keys_left)
+	matched_keys_left = nlp_join_keys_left.get_matches(tabla_a_columns, threshold=90)
 
-	JoinKeyRightTable = input('Join Key for the Right Table?\n-->')
-	JoinKeyRightTable = JoinKeyRightTable[0].split(',')
-	joined_table = pd.merge(table_a, table_b, how=TypeofJoin, left_on=JoinKeyLeftTable, right_on=JoinKeyRightTable)
+	join_keys_right = input('Join Key for the Right Table?\n-->')
+	nlp_join_keys_right = nlp_helpers.ProcessLanguageTokens(join_keys_right)
+	matched_keys_right = nlp_join_keys_right.get_matches(table_b_columns, threshold=90)
+
+
+	joined_table = pd.merge(table_a, table_b, how=TypeofJoin, left_on=matched_keys_left, right_on=matched_keys_right)
 	return joined_table
 
 
