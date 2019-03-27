@@ -24,9 +24,17 @@ def join(table_a, table_b):
 	matched_keys_right = nlp_join_keys_right.get_matches(table_b_columns, threshold=90)
 
 
-	joined_table = pd.merge(table_a, table_b, how=TypeofJoin, left_on=matched_keys_left, right_on=matched_keys_right)
+	joined_table = pd.merge(table_a.table, table_b.table, how=TypeofJoin, left_on=matched_keys_left, right_on=matched_keys_right)
 	return joined_table
 
+
+def union(table_a, table_b):
+	pass
+
+transformations_dict = {
+	'join' : join,
+	'union': union
+}
 
 # --------------------- for debugging ----------------------------------
 

@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Lists of Possible entities
-data_transformations = ['Join', 'Union']
+
 join_types = ['left', 'right', 'outer', 'inner']
 
 
@@ -22,3 +22,4 @@ table_dict = {
 									 'id': ['K0', 'K1', 'K3']
 									 }))
 }
+
