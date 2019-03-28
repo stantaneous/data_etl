@@ -1,5 +1,5 @@
 import pandas as pd
-from models import loaded_table_dict as table_dict
+from models import loaded_table_dict as table_dict, TableObj
 import nlp_helpers
 from models import join_types
 
@@ -25,7 +25,7 @@ def join(table_a, table_b):
 
 
 	joined_table = pd.merge(table_a.table, table_b.table, how=TypeofJoin, left_on=matched_keys_left, right_on=matched_keys_right)
-	return joined_table
+	return TableObj(joined_table, 'tx_table')
 
 
 def union(table_a, table_b):
