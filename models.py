@@ -12,7 +12,7 @@ class TableObj:
 		self.type = type
 
 
-table_dict = {
+loaded_table_dict = {
 	'tableA': TableObj(pd.DataFrame({'key': ['K0', 'K1', 'K2', 'K3', 'K4', 'K5'],
 									 'A': ['A0', 'A1', 'A2', 'A3', 'A4', 'A5'],
 									 'id': ['K0', 'K1', 'K2', 'K3', 'K4', 'K5']

@@ -1,5 +1,5 @@
 import pandas as pd
-from models import table_dict
+from models import loaded_table_dict as table_dict
 import nlp_helpers
 from models import join_types
 
