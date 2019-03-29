@@ -1,39 +1,64 @@
 import pandas as pd
 from models import loaded_table_dict as table_dict, TableObj
 import nlp_helpers
-from models import join_types
+
+join_types = ['left', 'right', 'outer', 'inner']
 
 
-def join(table_a, table_b):
-	tabla_a_columns = table_a.columns
-	table_b_columns = table_b.columns
-	TypeofJoin = input('Which type of join left, right, outer, inner\n-->')
-	join_type_nlp_obj = nlp_helpers.ProcessLanguageTokens(query=TypeofJoin)
-	TypeofJoin = join_type_nlp_obj.get_matches(join_types, threshold=60)[0]
+def prompt_join_type():
+	join_type_query = input('Which type of join left, right, outer, inner\n-->')
+	join_type_query_tokens = nlp_helpers.ProcessLanguageTokens(query=join_type_query)
 
-	if not TypeofJoin:
-		print('Join Type is Invalid Try again!')
-		return join(table_a, table_b)
+	# only take first join type found in user query
+	join_type = join_type_query_tokens.get_matches(join_types, threshold=90)[0]
 
-	join_keys_left = input('Join Key for the Left Table?\n-->')
-	nlp_join_keys_left = nlp_helpers.ProcessLanguageTokens(join_keys_left)
-	matched_keys_left = nlp_join_keys_left.get_matches(tabla_a_columns, threshold=90)
-
-	join_keys_right = input('Join Key for the Right Table?\n-->')
-	nlp_join_keys_right = nlp_helpers.ProcessLanguageTokens(join_keys_right)
-	matched_keys_right = nlp_join_keys_right.get_matches(table_b_columns, threshold=90)
+	# If join type not found then ask again
+	if not join_type:
+		print('Join type not found! Try again')
+		return prompt_join_type()
+	return join_type
 
 
-	joined_table = pd.merge(table_a.table, table_b.table, how=TypeofJoin, left_on=matched_keys_left, right_on=matched_keys_right)
+def prompt_join_keys(left_or_right, table_column_list):
+	join_keys_query = input('Join Key for the ' + left_or_right + ' Table?\n-->')
+	join_keys_tokens = nlp_helpers.ProcessLanguageTokens(join_keys_query)
+
+	# Get matched column with the user_query
+	matched_key = join_keys_tokens.get_matches(table_column_list, threshold=91)
+	return matched_key
+
+
+def join(l_table, r_table, type=None, left_on=None, right_on=None):
+	l_table = l_table
+	r_table = r_table
+	type = type
+	if not type:
+		type = prompt_join_type()
+	left_on = left_on
+	if not left_on:
+		left_on = prompt_join_keys('Left', l_table.columns)
+	right_on = right_on
+	if not right_on:
+		right_on = prompt_join_keys('Right', r_table.columns)
+
+	# If left_on is empty then join on default columns
+	if not left_on:
+		print('Left Table keys not found! table will be joined on same columns')
+		right_on = []
+	joined_table = pd.merge(l_table.table, r_table.table, how=type, left_on=left_on, right_on=right_on)
 	return TableObj(joined_table, 'tx_table')
 
 
 def union(table_a, table_b):
+	return pd.concat([table_a, table_b], ignore_index=True)
+
+def filter(table):
 	pass
 
 transformations_dict = {
-	'join' : join,
-	'union': union
+	'join': join,
+	'union': union,
+	'filter': filter
 }
 
 # --------------------- for debugging ----------------------------------
