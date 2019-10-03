@@ -20,7 +20,9 @@ class TransformData:
 
 	def load_table(self, table_name):
 		table_a = models.loaded_table_dict.get(self.matched_table[0])
-		table_b = models.loaded_table_dict.get(self.matched_table[1])
+		table_b = models.loaded_table_dict.get(self.matched_table[1]) if len(self.matched_table)> 1 else None
+		if not table_b:
+			table_b = self.language_token.get_matches(table_a.columns, threshold=90)
 		if not table_a or not table_b:
 			raise ValueError('Could Not Find Tables in loaded table list')
 		models.loaded_table_dict[table_name] = self.transformation_function(table_a, table_b)

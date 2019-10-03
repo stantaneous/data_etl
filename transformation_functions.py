@@ -50,15 +50,20 @@ def join(l_table, r_table, type=None, left_on=None, right_on=None):
 
 
 def union(table_a, table_b):
-	return pd.concat([table_a, table_b], ignore_index=True)
+	# Same Column name for sql union like behaviour
+	table_b.table.columns = table_a.table.columns
+	return TableObj(pd.concat([table_a.table, table_b.table], ignore_index=True), 'tx_table')
 
-def filter(table):
-	pass
+
+def select(table, columns):
+	print(table.table[columns])
+	return TableObj(table.table[columns], 'tx_table')
+
 
 transformations_dict = {
 	'join': join,
 	'union': union,
-	'filter': filter
+	'select': select
 }
 
 # --------------------- for debugging ----------------------------------
